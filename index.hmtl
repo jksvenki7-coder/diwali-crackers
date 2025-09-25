@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diwali Crackers Online Booking</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 10px; background: #FFF8E1; }
+  h1 { color: #F57C00; }
+  .cracker-list { display: flex; flex-wrap: wrap; gap: 15px; }
+  .cracker-item { background: white; border: 1px solid #eee; padding: 10px; width: 200px; }
+  button { background: #F57C00; color: white; border: none; padding: 6px 10px; cursor: pointer; }
+  #cart { margin-top: 25px; }
+  #cart table { width: 100%; border-collapse: collapse; }
+  #cart th, #cart td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+</style>
+</head>
+<body>
+
+<h1>Diwali Crackers Booking</h1>
+
+<div class="cracker-list" id="crackerList"></div>
+
+<h2>Your Booking Cart</h2>
+<div id="cart">
+  <table>
+    <thead>
+      <tr><th>Cracker</th><th>Qty</th><th>Price</th><th>Total</th><th>Action</th></tr>
+    </thead>
+    <tbody id="cartItems"></tbody>
+  </table>
+  <p><strong>Total Booking Amount: ₹<span id="totalAmount">0</span></strong></p>
+</div>
+
+<h2>Booking Details</h2>
+<form id="bookingForm">
+  <label>
+    Name:<br />
+    <input type="text" id="name" required />
+  </label><br /><br />
+  <label>
+    Phone:<br />
+    <input type="tel" id="phone" required />
+  </label><br /><br />
+  <label>
+    Address:<br />
+    <textarea id="address" rows="3" required></textarea>
+  </label><br /><br />
+  <button type="submit">Confirm Booking</button>
+</form>
+
+<script>
+// Sample crackers data
+const crackers = [
+  { id: 1, name: "Lakshmi Crackers", price: 50 },
+  { id: 2, name: "Bijili Crackers", price: 30 },
+  { id: 3, name: "Flower Pot", price: 70 },
+  { id: 4, name: "Rocket", price: 120 },
+];
+
+// Cart object to hold selected crackers
+let cart = {};
+
+const crackerList = document.getElementById('crackerList');
+const cartItems = document.getElementById('cartItems');
+const totalAmountEl = document.getElementById('totalAmount');
+
+// Render crackers
+crackers.forEach(cracker => {
+  const div = document.createElement('div');
+  div.className = 'cracker-item';
+  div.innerHTML = `
+    <h3>${cracker.name}</h3>
+    <p>Price: ₹${cracker.price}</p>
+    <button onclick="addToCart(${cracker.id})">Add to Cart</button>
+  `;
+  crackerList.appendChild(div);
+});
+
+// Add cracker to cart
+function addToCart(id) {
+  if(cart[id]) {
+    cart[id].qty++;
+  } else {
+    const cracker = crackers.find(c => c.id === id);
+    cart[id] = {...cracker, qty: 1};
+  }
+  renderCart();
+}
+
+// Remove cracker from cart
+function removeFromCart(id) {
+  delete cart[id];
+  renderCart();
+}
+
+// Render cart items
+function renderCart() {
+  cartItems.innerHTML = '';
+  let total = 0;
+  Object.values(cart).forEach(item => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${item.name}</td>
+      <td>${item.qty}</td>
+      <td>₹${item.price}</td>
+      <td>₹${itemTotal}</td>
+      <td><button onclick="removeFromCart(${item.id})">Remove</button></td>
+    `;
+    cartItems.appendChild(tr);
+  });
+  totalAmountEl.textContent = total.toFixed(2);
+}
+
+// Handle booking form submission
+document.getElementById('bookingForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if(Object.keys(cart).length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+  const bookingDetails = {
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    order: cart,
+    totalAmount: totalAmountEl.textContent
+  };
+  console.log('Booking Details:', bookingDetails);
+  alert('Booking confirmed! Thank you for your order.');
+  // Clear cart and form
+  cart = {};
+  renderCart();
+  this.reset();
+});
+</script>
+
+</body>
+</html>
