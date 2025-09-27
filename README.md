@@ -52,7 +52,8 @@ diwali crackers delivery all over india
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
       margin-bottom: 20px;
       transition: transform 0.3s ease;
-    }
+    }![Uploading image.png…]()
+
     .diwali-image:hover {
       transform: scale(1.05);
     }
